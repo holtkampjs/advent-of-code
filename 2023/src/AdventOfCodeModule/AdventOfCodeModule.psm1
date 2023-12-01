@@ -41,7 +41,15 @@ function Get-WebRequestHeadersForAdventOfCode {
 	}
 }
 
-function Get-AdventOfCodeData {
+function Get-AdventOfCodeDataFilename {
+	param (
+		[int]$Day
+	)
+
+	return "$PSScriptRoot/../Day{0:D2}/input.txt" -f $Day
+}
+
+function Import-AdventOfCodeData {
 	param (
 		[int]$Day
 	)
@@ -51,8 +59,22 @@ function Get-AdventOfCodeData {
 		Uri = "https://adventofcode.com/2023/day/$Day/input"
 		WebSession = Get-WebRequestSessionForAdventOfCode
 		Headers = Get-WebRequestHeadersForAdventOfCode -Day $Day
-		OutFile = "$PSScriptRoot/../Day{0:D2}/input.txt" -f $Day
+		OutFile = Get-AdventOfCodeDataFilename -Day $Day
 	}
 
 	Invoke-WebRequest @options
+}
+
+function Get-AdventOfCodeData {
+	param (
+		[int]$Day
+	)
+
+	$filePath = Get-AdventOfCodeDataFilename -Day $Day
+
+	if (-not (Test-Path $filePath)) {
+		Import-AdventOfCodeData -Day $Day
+	}
+
+	Get-Content -Path $filePath
 }
