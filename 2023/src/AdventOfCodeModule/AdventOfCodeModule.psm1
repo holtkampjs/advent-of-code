@@ -73,6 +73,10 @@ function Get-AdventOfCodeData {
 	$filePath = Get-AdventOfCodeDataFilename -Day $Day
 
 	if (-not (Test-Path $filePath)) {
+		$directoryPath = "$PSScriptRoot/../Day{0:D2}" -f $Day
+		if (-not (Test-Path $directoryPath)) {
+			New-Item -Path $directoryPath -Type Directory
+		}
 		Import-AdventOfCodeData -Day $Day
 	}
 
